@@ -56,6 +56,9 @@
                                                          NSUserDomainMask, YES);
     NSString *docsDir = [paths objectAtIndex:0];
     self.docsDir = [docsDir stringByAppendingString:@"/"];
+    
+    NSLog(@"Models directory: %@", self.docsDir);
+    
     NSArray *files = [[NSFileManager defaultManager] subpathsAtPath:docsDir];
     NSMutableArray *modelFiles = [[NSMutableArray alloc] init];
     for (NSString *file in files)
