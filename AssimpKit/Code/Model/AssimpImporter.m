@@ -223,10 +223,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     node.name = [NSString stringWithUTF8String:aiNodeName->data];
     DLog(@" Creating node %@ with %d meshes", node.name, aiNode->mNumMeshes);
     int nVertices = [self findNumVerticesInNode:aiNode inScene:aiScene];
-    node.geometry = [self makeSCNGeometryFromAssimpNode:aiNode
-                                                inScene:aiScene
-                                           withVertices:nVertices
-                                                 atPath:path];
+    DLog(@" N VERTICES: %@", nVertices);
+    if (nVertices > 0)
+    {
+        node.geometry = [self makeSCNGeometryFromAssimpNode:aiNode
+                                                    inScene:aiScene
+                                               withVertices:nVertices
+                                                     atPath:path];
+    }
     // node.light = [self makeSCNLightFromAssimpNode:aiNode inScene:aiScene];
     node.camera = [self makeSCNCameraFromAssimpNode:aiNode inScene:aiScene];
     [self.boneNames
@@ -518,6 +522,58 @@ makeTextureGeometrySourceForNode:(const struct aiNode *)aiNode
 }
 
 /**
+ Creates a scenekit vertex color source from the vertex color information of
+ the specified node.
+ 
+ @param aiNode The assimp node.
+ @param aiScene The assimp scene.
+ @param nVertices The number of vertices in the meshes of the node.
+ @return A new color source whose semantic property is vertex color.
+ */
+- (SCNGeometrySource *)
+makeColorGeometrySourceForNode:(const struct aiNode *)aiNode
+                       inScene:(const struct aiScene *)aiScene
+                 withNVertices:(int)nVertices
+{
+    float *scnColors = (float *)malloc(nVertices * 3 * sizeof(float));
+    int colorsCounter = 0;
+
+    for (int i = 0; i < aiNode->mNumMeshes; i++)
+    {
+        int aiMeshIndex = aiNode->mMeshes[i];
+        const struct aiMesh *aiMesh = aiScene->mMeshes[aiMeshIndex];
+        const struct aiColor4D *aiColor4D = aiMesh->mColors[0];
+
+        if (aiColor4D == NULL)
+        {
+            free(scnColors);
+            return NULL;
+        }
+
+        for (int j = 0; j < aiMesh->mNumVertices; j++)
+        {
+            scnColors[colorsCounter++] = aiColor4D[j].r;
+            scnColors[colorsCounter++] = aiColor4D[j].g;
+            scnColors[colorsCounter++] = aiColor4D[j].b;
+        }
+    }
+
+    SCNGeometrySource *colorSource = [SCNGeometrySource
+        geometrySourceWithData:[NSData
+                                   dataWithBytes:scnColors
+                                          length:nVertices * 3 * sizeof(float)]
+                      semantic:SCNGeometrySourceSemanticColor
+                   vectorCount:nVertices
+               floatComponents:YES
+           componentsPerVector:3
+             bytesPerComponent:sizeof(float)
+                    dataOffset:0
+                    dataStride:3 * sizeof(float)];
+    free(scnColors);
+    return colorSource;
+}
+
+/**
  Creates an array of geometry sources for the specifed node describing
  the vertices in the geometry and their attributes.
 
@@ -547,6 +603,17 @@ makeTextureGeometrySourceForNode:(const struct aiNode *)aiNode
         addObject:[self makeTextureGeometrySourceForNode:aiNode
                                                  inScene:aiScene
                                            withNVertices:nVertices]];
+
+    SCNGeometrySource *colorGeometrySource =
+        [self makeColorGeometrySourceForNode:aiNode
+                                     inScene:aiScene
+                               withNVertices:nVertices];
+    
+    if (colorGeometrySource != nil)
+    {
+        [scnGeometrySources addObject:colorGeometrySource];
+    }
+
     return scnGeometrySources;
 }
 
