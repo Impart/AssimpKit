@@ -220,11 +220,8 @@
                 DLog(@"  tex file name is %@", texFileName);
                 NSString *sceneDir = [[path stringByDeletingLastPathComponent]
                     stringByAppendingString:@"/"];
-                self.externalTexturePath =
-                    [sceneDir stringByAppendingString:texFileName];
-                DLog(@"  tex path is %@", self.externalTexturePath);
-                [self generateCGImageForExternalTextureAtPath:
-                          self.externalTexturePath];
+                NSURL *baseURL = [NSURL fileURLWithPath:sceneDir];
+                self.externalTexturePath = [self generateCGImageForExternalTextureAtBaseURL:baseURL fileName:texFileName];
             }
         }
     }
@@ -260,18 +257,49 @@
     }
 }
 
-
-/**
- Generates a bitmap image representing the external texture.
-
- @param path The path to the scene file to load.
- */
--(void)generateCGImageForExternalTextureAtPath:(NSString*)path
-{
+- (NSString *)generateCGImageForExternalTextureAtBaseURL:(NSURL *)baseURL fileName:(NSString *)fileName {
     DLog(@" Generating external texture");
-    NSURL *imageURL = [NSURL fileURLWithPath:path];
-    self.imageSource = CGImageSourceCreateWithURL((CFURLRef)imageURL, NULL);
+    NSURL *realImageUrl = [self getFilePathWithBaseURL:baseURL fileName:fileName];
+    
+    if (!realImageUrl) {
+        NSString *fixedFileName = [fileName stringByReplacingOccurrencesOfString:@"_" withString:@"-"];
+        realImageUrl = [self getFilePathWithBaseURL:baseURL fileName:fixedFileName];
+    }
+    
+    self.imageSource = CGImageSourceCreateWithURL((CFURLRef)realImageUrl, NULL);
     self.image = CGImageSourceCreateImageAtIndex(self.imageSource, 0, NULL);
+    
+    return realImageUrl.path;
+}
+
+- (NSURL *)getFilePathWithBaseURL:(NSURL *)baseURL fileName:(NSString *)_fileName {
+    NSString *fileName = _fileName.lowercaseString;
+    NSArray<NSURL *> *contents = [NSFileManager.defaultManager contentsOfDirectoryAtURL:baseURL includingPropertiesForKeys:nil options:0 error:nil];
+    
+    // Check files first
+    for (NSURL *content in contents) {
+        if (content.hasDirectoryPath) {
+            continue;
+        }
+        
+        if ([content.lastPathComponent.lowercaseString isEqualToString:fileName]) {
+            return content;
+        }
+    }
+    
+    // Check subdirectories
+    for (NSURL *content in contents) {
+        if (!content.hasDirectoryPath) {
+            continue;
+        }
+        
+        NSURL *fileUrl = [self getFilePathWithBaseURL:content fileName:fileName];
+        if (fileUrl) {
+            return fileUrl;
+        }
+    }
+    
+    return nil;
 }
 
 #pragma mark - Extract color
