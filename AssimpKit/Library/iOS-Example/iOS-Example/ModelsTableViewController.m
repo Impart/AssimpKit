@@ -51,6 +51,8 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    NSLog(@"Allowed file formats: %@", [[SCNScene allowedFileExtensions] componentsJoinedByString:@", "]);
 
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,
                                                          NSUserDomainMask, YES);

@@ -105,17 +105,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     // set the scene to the view
     scnView.scene = scene.modelScene;
-
-    // allows the user to manipulate the camera
-    scnView.allowsCameraControl = YES;
-
-    // show statistics such as fps and timing information
-    scnView.showsStatistics = YES;
-
-    // configure the view
-    scnView.backgroundColor = [UIColor blackColor];
-
-    scnView.playing = YES;
 }
 
 - (void)animationDidStart:(CAAnimation *)anim
