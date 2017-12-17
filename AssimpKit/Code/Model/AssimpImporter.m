@@ -232,7 +232,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                      atPath:path];
     }
     // node.light = [self makeSCNLightFromAssimpNode:aiNode inScene:aiScene];
-    node.camera = [self makeSCNCameraFromAssimpNode:aiNode inScene:aiScene];
+//    node.camera = [self makeSCNCameraFromAssimpNode:aiNode inScene:aiScene];
     [self.boneNames
         addObjectsFromArray:[self getBoneNamesForAssimpNode:aiNode
                                                     inScene:aiScene]];
@@ -723,7 +723,7 @@ makeIndicesGeometryElementForMeshIndex:(int)aiMeshIndex
 {
     NSString *channel = @".mappingChannel";
     NSString *wrapS = @".wrapS";
-    NSString *wrapT = @".wrapS";
+    NSString *wrapT = @".wrapT";
     NSString *intensity = @".intensity";
     NSString *minFilter = @".minificationFilter";
     NSString *magFilter = @".magnificationFilter";
@@ -782,6 +782,10 @@ makeIndicesGeometryElementForMeshIndex:(int)aiMeshIndex
             [textureInfo getMaterialPropertyContents];
         keyPrefix = @"ambientOcclusion";
     }
+    
+    if (!keyPrefix.length) {
+        return;
+    }
 
     // Update the keys
     channel = [keyPrefix stringByAppendingString:channel];
@@ -791,16 +795,16 @@ makeIndicesGeometryElementForMeshIndex:(int)aiMeshIndex
     minFilter = [keyPrefix stringByAppendingString:minFilter];
     magFilter = [keyPrefix stringByAppendingString:magFilter];
 
-    [material setValue:0 forKey:channel];
-    [material setValue:[NSNumber numberWithInt:SCNWrapModeRepeat]
-                forKey:wrapS];
-    [material setValue:[NSNumber numberWithInt:SCNWrapModeRepeat]
-                forKey:wrapT];
-    [material setValue:[NSNumber numberWithInt:1] forKey:intensity];
-    [material setValue:[NSNumber numberWithInt:SCNFilterModeLinear]
-                forKey:minFilter];
-    [material setValue:[NSNumber numberWithInt:SCNFilterModeLinear]
-                forKey:magFilter];
+    [material setValue:@0 forKeyPath:channel];
+    [material setValue:@(SCNWrapModeRepeat)
+                forKeyPath:wrapS];
+    [material setValue:@(SCNWrapModeRepeat)
+                forKeyPath:wrapT];
+    [material setValue:@1 forKeyPath:intensity];
+    [material setValue:@(SCNFilterModeLinear)
+                forKeyPath:minFilter];
+    [material setValue:@(SCNFilterModeLinear)
+                forKeyPath:magFilter];
 }
 
 /**
