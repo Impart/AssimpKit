@@ -37,6 +37,7 @@
 #import "ModelsTableViewController.h"
 #import <AssimpKit/PostProcessingFlags.h>
 #import <AssimpKit/SCNScene+AssimpImport.h>
+#import <AssimpKit/AssimpImporter.h>
 #import "AnimationsTableViewController.h"
 
 @interface ModelsTableViewController ()
@@ -57,11 +58,14 @@
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,
                                                          NSUserDomainMask, YES);
     NSString *docsDir = [paths objectAtIndex:0];
-    self.docsDir = [docsDir stringByAppendingString:@"/"];
+    
+    [AssimpImporter setTexturesFolders:@[[NSURL URLWithString:[docsDir stringByAppendingString:@"/textures/"]]]];
+    
+    self.docsDir = [docsDir stringByAppendingString:@"/models/"];
     
     NSLog(@"Models directory: %@", self.docsDir);
     
-    NSArray *files = [[NSFileManager defaultManager] subpathsAtPath:docsDir];
+    NSArray *files = [[NSFileManager defaultManager] subpathsAtPath:self.docsDir];
     NSMutableArray *modelFiles = [[NSMutableArray alloc] init];
     for (NSString *file in files)
     {

@@ -84,6 +84,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 @implementation AssimpImporter
 
++ (void)setTexturesFolders:(NSArray<NSURL *> *)folders {
+    [SCNTextureInfo setTexturesFolders:folders];
+}
+
 #pragma mark - Creating an importer
 
 /**

@@ -33,6 +33,7 @@
  ---------------------------------------------------------------------------
  */
 
+static NSArray<NSURL *> *c_folders = nil;
 
 #import "SCNTextureInfo.h"
 #import <ImageIO/ImageIO.h>
@@ -118,6 +119,10 @@
 #pragma mark -
 
 @implementation SCNTextureInfo
+
++ (void)setTexturesFolders:(NSArray<NSURL *> *)folders {
+    c_folders = folders;
+}
 
 #pragma mark - Creating a texture info
 
@@ -294,6 +299,26 @@
         }
         
         NSURL *fileUrl = [self getFilePathWithBaseURL:content fileName:fileName];
+        if (fileUrl) {
+            return fileUrl;
+        }
+    }
+    
+    // Check additional folders
+    for (NSURL *folder in c_folders) {
+        if ([folder isEqual:baseURL]) {
+            continue;
+        }
+        
+        if (!folder.hasDirectoryPath) {
+            if ([folder.lastPathComponent.lowercaseString isEqualToString:fileName]) {
+                return folder;
+            } else {
+                continue;
+            }
+        }
+        
+        NSURL *fileUrl = [self getFilePathWithBaseURL:folder fileName:fileName];
         if (fileUrl) {
             return fileUrl;
         }

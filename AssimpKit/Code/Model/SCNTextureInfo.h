@@ -38,6 +38,8 @@
 
 @interface SCNTextureInfo : NSObject
 
++ (void)setTexturesFolders:(NSArray<NSURL *> *)folders;
+
 #pragma mark - Texture metadata
 
 /**
