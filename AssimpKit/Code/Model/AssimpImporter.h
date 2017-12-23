@@ -45,6 +45,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 @interface AssimpImporter : NSObject
 
++ (NSArray<NSString *> *)assimpSupportedFileExtensions;
 + (void)setTexturesFolders:(NSArray<NSURL *> *)folders;
 
 #pragma mark - Creating an importer

@@ -53,6 +53,7 @@
 {
     [super viewDidLoad];
     
+    NSLog(@"All assimp supported formats: %@", [[AssimpImporter assimpSupportedFileExtensions] componentsJoinedByString:@", "]);
     NSLog(@"Allowed file formats: %@", [[SCNScene allowedFileExtensions] componentsJoinedByString:@", "]);
 
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,

@@ -84,6 +84,16 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 @implementation AssimpImporter
 
++ (NSArray<NSString *> *)assimpSupportedFileExtensions {
+    struct aiString supportedExtensionsCString;
+    aiGetExtensionList(&supportedExtensionsCString);
+    
+    NSString *supportedExtesnionsString = [NSString stringWithUTF8String:(const char *_Nonnull) & supportedExtensionsCString.data];
+    supportedExtesnionsString = [supportedExtesnionsString stringByReplacingOccurrencesOfString:@"*." withString:@""];
+    
+    return [supportedExtesnionsString componentsSeparatedByString:@";"];
+}
+
 + (void)setTexturesFolders:(NSArray<NSURL *> *)folders {
     [SCNTextureInfo setTexturesFolders:folders];
 }
