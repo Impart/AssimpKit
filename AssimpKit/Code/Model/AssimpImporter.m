@@ -42,6 +42,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "assimp/postprocess.h" // Post processing flags
 #include "assimp/scene.h"       // Output data structure
 
+static NSArray<NSString *> *c_supportedExtensions = nil;
+
+
 @interface AssimpImporter ()
 
 #pragma mark - Bone data
@@ -85,13 +88,19 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 @implementation AssimpImporter
 
 + (NSArray<NSString *> *)assimpSupportedFileExtensions {
+    if (c_supportedExtensions) {
+        return c_supportedExtensions;
+    }
+    
     struct aiString supportedExtensionsCString;
     aiGetExtensionList(&supportedExtensionsCString);
     
-    NSString *supportedExtesnionsString = [NSString stringWithUTF8String:(const char *_Nonnull) & supportedExtensionsCString.data];
+    NSString *supportedExtesnionsString = [NSString stringWithUTF8String:(const char *_Nonnull) &supportedExtensionsCString.data];
     supportedExtesnionsString = [supportedExtesnionsString stringByReplacingOccurrencesOfString:@"*." withString:@""];
     
-    return [supportedExtesnionsString componentsSeparatedByString:@";"];
+    c_supportedExtensions = [[supportedExtesnionsString componentsSeparatedByString:@";"] copy];
+    
+    return c_supportedExtensions;
 }
 
 + (void)setTexturesFolders:(NSArray<NSURL *> *)folders {

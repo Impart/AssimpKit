@@ -45,8 +45,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 @interface AssimpImporter : NSObject
 
-+ (NSArray<NSString *> *)assimpSupportedFileExtensions;
-+ (void)setTexturesFolders:(NSArray<NSURL *> *)folders;
+@property (class, readonly, nonatomic) NSArray<NSString *>  * _Nonnull assimpSupportedFileExtensions;
+
++ (void)setTexturesFolders:(NSArray<NSURL *> * _Nonnull)folders;
 
 #pragma mark - Creating an importer
 
@@ -59,7 +60,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  @return A new importer.
  */
-- (id)init;
+- (instancetype _Nonnull)init;
 
 #pragma mark - Loading a scene
 /**
@@ -70,8 +71,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  @param error Scene import error.
  @return A new scene object, or nil if no scene could be loaded.
  */
-- (SCNAssimpScene *)importScene:(NSString *)filePath
+- (SCNAssimpScene * _Nullable)importScene:(NSString * _Nonnull)filePath
                postProcessFlags:(AssimpKitPostProcessSteps)postProcessFlags
-                          error:(NSError **)error;
+                          error:(NSError * _Nullable * _Nullable)error;
 
 @end
