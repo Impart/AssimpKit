@@ -95,10 +95,9 @@ static NSArray<NSString *> *c_supportedExtensions = nil;
     struct aiString supportedExtensionsCString;
     aiGetExtensionList(&supportedExtensionsCString);
     
-    NSString *supportedExtesnionsString = [NSString stringWithUTF8String:(const char *_Nonnull) &supportedExtensionsCString.data];
+    NSString *supportedExtesnionsString = [NSString stringWithUTF8String:(const char * _Nonnull) &(supportedExtensionsCString.data)];
     supportedExtesnionsString = [supportedExtesnionsString stringByReplacingOccurrencesOfString:@"*." withString:@""];
-    
-    c_supportedExtensions = [[supportedExtesnionsString componentsSeparatedByString:@";"] copy];
+    c_supportedExtensions = [supportedExtesnionsString componentsSeparatedByString:@";"];
     
     return c_supportedExtensions;
 }
