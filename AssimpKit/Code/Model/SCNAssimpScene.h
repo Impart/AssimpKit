@@ -45,6 +45,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 @interface SCNAssimpScene : SCNScene
 
+// ******************************* MARK: - Class Properties
+
+@property (class, readonly, nonatomic) NSArray<NSString *>  * _Nonnull assimpSupportedFileExtensions;
+
+// ******************************* MARK: - Class Methods
+
++ (void)setTexturesFolders:(NSArray<NSURL *> * _Nonnull)folders;
+
 #pragma mark - SCNScene objects
 
 /**
@@ -54,12 +62,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /**
  The scene representing the mdoel and the optional skeleton.
  */
-@property (readonly, nonatomic) SCNScene *modelScene;
+@property (readonly, nonatomic, nullable) SCNScene *modelScene;
 
 /**
  The array of scenes where each scene is a skeletal animation.
  */
-@property (readonly, nonatomic) NSDictionary *animationScenes;
+@property (readonly, nonatomic, nonnull) NSDictionary *animationScenes;
 
 #pragma mark - Animation data
 
@@ -71,12 +79,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /**
  The root of the skeleton.
  */
-@property (readwrite, nonatomic) SCNNode *skeletonNode;
+@property (readwrite, nonatomic, nullable) SCNNode *skeletonNode;
 
 /**
  The dictionary of SCNAssimpAnimation objects, for each animation in the scene.
  */
-@property (readonly, nonatomic) NSMutableDictionary *animations;
+@property (readonly, nonatomic, nonnull) NSMutableDictionary *animations;
 
 #pragma mark - Creating a new scene animation
 /**
@@ -88,7 +96,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  @return A new scene animation object.
  */
-- (id)init;
+- (instancetype _Nonnull)init;
 
 #pragma mark - Add, fetch SCNAssimpAnimation animations
 
@@ -101,7 +109,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  @param key The unique scene animation key.
  @return The scene animation object.
  */
-- (SCNAssimpAnimation *)animationForKey:(NSString *)key;
+- (SCNAssimpAnimation * _Nullable)animationForKey:(NSString * _Nonnull)key;
 
 #pragma mark - Add, fetch scene animations
 
@@ -114,7 +122,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  @return The array of animation keys.
  */
-- (NSArray *)animationKeys;
+- (NSArray * _Nonnull)animationKeys;
 
 /**
  Return the SCNScene object for the specified animation key.
@@ -122,7 +130,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  @param key The unique scene animation key.
  @return The scene animation object.
  */
-- (SCNScene *)animationSceneForKey:(NSString *)key;
+- (SCNScene * _Nullable)animationSceneForKey:(NSString * _Nonnull)key;
 
 #pragma mark - Make SCNScene objects
 /**

@@ -87,21 +87,6 @@ static NSArray<NSString *> *c_supportedExtensions = nil;
 
 @implementation AssimpImporter
 
-+ (NSArray<NSString *> *)assimpSupportedFileExtensions {
-    if (c_supportedExtensions) {
-        return c_supportedExtensions;
-    }
-    
-    struct aiString supportedExtensionsCString;
-    aiGetExtensionList(&supportedExtensionsCString);
-    
-    NSString *supportedExtesnionsString = [NSString stringWithUTF8String:(const char * _Nonnull) &(supportedExtensionsCString.data)];
-    supportedExtesnionsString = [supportedExtesnionsString stringByReplacingOccurrencesOfString:@"*." withString:@""];
-    c_supportedExtensions = [supportedExtesnionsString componentsSeparatedByString:@";"];
-    
-    return c_supportedExtensions;
-}
-
 + (void)setTexturesFolders:(NSArray<NSURL *> *)folders {
     [SCNTextureInfo setTexturesFolders:folders];
 }
@@ -926,7 +911,7 @@ makeIndicesGeometryElementForMeshIndex:(int)aiMeshIndex
                                withSCNMaterial:material];
         DLog(@"+++ Loading blend mode");
         unsigned int blendMode = 0;
-        unsigned int *max;
+        unsigned int *max = nil;
         aiGetMaterialIntegerArray(aiMaterial, AI_MATKEY_BLEND_FUNC,
                                   (int *)&blendMode, max);
         if (blendMode == aiBlendMode_Default)

@@ -1,0 +1,6 @@
+framework module AssimpKit {
+    umbrella header "SCNScene+AssimpImport.h"
+    
+    export *
+    module * { export * }
+}

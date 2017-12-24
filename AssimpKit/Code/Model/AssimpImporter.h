@@ -45,8 +45,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 @interface AssimpImporter : NSObject
 
-@property (class, readonly, nonatomic) NSArray<NSString *>  * _Nonnull assimpSupportedFileExtensions;
-
 + (void)setTexturesFolders:(NSArray<NSURL *> * _Nonnull)folders;
 
 #pragma mark - Creating an importer
