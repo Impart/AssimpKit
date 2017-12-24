@@ -270,7 +270,7 @@ static NSArray<NSURL *> *c_folders = nil;
     DLog(@" Generating external texture");
     NSURL *realImageUrl = [self getFilePathWithBaseURL:baseURL fileName:fileName];
     
-    if (!realImageUrl) {
+    if (!realImageUrl && [fileName containsString:@"_"]) {
         NSString *fixedFileName = [fileName stringByReplacingOccurrencesOfString:@"_" withString:@"-"];
         realImageUrl = [self getFilePathWithBaseURL:baseURL fileName:fixedFileName];
     }
@@ -283,36 +283,16 @@ static NSArray<NSURL *> *c_folders = nil;
 
 - (NSURL *)getFilePathWithBaseURL:(NSURL *)baseURL fileName:(NSString *)_fileName {
     NSString *fileName = _fileName.lowercaseString;
-    NSArray<NSURL *> *contents = [NSFileManager.defaultManager contentsOfDirectoryAtURL:baseURL includingPropertiesForKeys:nil options:0 error:nil];
-    
-    // Check files first
-    for (NSURL *content in contents) {
-        if (content.hasDirectoryPath) {
-            continue;
-        }
-        
-        if ([content.lastPathComponent.lowercaseString isEqualToString:fileName]) {
-            return content;
-        }
-    }
-    
-    // Check subdirectories
-    for (NSURL *content in contents) {
-        if (!content.hasDirectoryPath) {
-            continue;
-        }
-        
-        NSURL *fileUrl = [self getFilePathWithBaseURL:content fileName:fileName];
-        if (fileUrl) {
-            return fileUrl;
-        }
+    NSURL *fileURL = [self getFilePathRecursiveWithBaseURL:baseURL fileName:fileName];
+    if (fileURL) {
+        return fileURL;
     }
     
     // Check baseURL
     if (self.baseURL) {
         if (![self.baseURL isEqual:baseURL]) {
             if (self.baseURL.hasDirectoryPath) {
-                NSURL *fileUrl = [self getFilePathWithBaseURL:self.baseURL fileName:fileName];
+                NSURL *fileUrl = [self getFilePathRecursiveWithBaseURL:self.baseURL fileName:fileName];
                 if (fileUrl) {
                     return fileUrl;
                 }
@@ -338,7 +318,36 @@ static NSArray<NSURL *> *c_folders = nil;
             }
         }
         
-        NSURL *fileUrl = [self getFilePathWithBaseURL:folder fileName:fileName];
+        NSURL *fileUrl = [self getFilePathRecursiveWithBaseURL:folder fileName:fileName];
+        if (fileUrl) {
+            return fileUrl;
+        }
+    }
+    
+    return nil;
+}
+
+- (NSURL *)getFilePathRecursiveWithBaseURL:(NSURL *)baseURL fileName:(NSString *)fileName {
+    NSArray<NSURL *> *contents = [NSFileManager.defaultManager contentsOfDirectoryAtURL:baseURL includingPropertiesForKeys:nil options:0 error:nil];
+    
+    // Check files first
+    for (NSURL *content in contents) {
+        if (content.hasDirectoryPath) {
+            continue;
+        }
+        
+        if ([content.lastPathComponent.lowercaseString isEqualToString:fileName]) {
+            return content;
+        }
+    }
+    
+    // Check subdirectories
+    for (NSURL *content in contents) {
+        if (!content.hasDirectoryPath) {
+            continue;
+        }
+        
+        NSURL *fileUrl = [self getFilePathRecursiveWithBaseURL:content fileName:fileName];
         if (fileUrl) {
             return fileUrl;
         }
