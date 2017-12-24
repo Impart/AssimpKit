@@ -37,7 +37,6 @@
 #import "ModelsTableViewController.h"
 #import <AssimpKit/PostProcessingFlags.h>
 #import <AssimpKit/SCNScene+AssimpImport.h>
-#import <AssimpKit/AssimpImporter.h>
 #import "AnimationsTableViewController.h"
 
 @interface ModelsTableViewController ()
@@ -53,14 +52,14 @@
 {
     [super viewDidLoad];
     
-    NSLog(@"All assimp supported formats: %@", [AssimpImporter.assimpSupportedFileExtensions componentsJoinedByString:@", "]);
+    NSLog(@"All assimp supported formats: %@", [SCNAssimpScene.assimpSupportedFileExtensions componentsJoinedByString:@", "]);
     NSLog(@"Allowed file formats: %@", [[SCNScene allowedFileExtensions] componentsJoinedByString:@", "]);
 
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,
                                                          NSUserDomainMask, YES);
     NSString *docsDir = [paths objectAtIndex:0];
     
-    [AssimpImporter setTexturesFolders:@[[NSURL URLWithString:[docsDir stringByAppendingString:@"/textures/"]]]];
+    [SCNAssimpScene setTexturesFolders:@[[NSURL URLWithString:[docsDir stringByAppendingString:@"/textures/"]]]];
     
     self.docsDir = [docsDir stringByAppendingString:@"/models/"];
     

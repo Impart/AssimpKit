@@ -41,6 +41,8 @@ static NSArray<NSURL *> *c_folders = nil;
 
 @interface SCNTextureInfo ()
 
+@property (nonatomic) NSURL *baseURL;
+
 #pragma mark - Texture material
 
 /**
@@ -135,13 +137,15 @@ static NSArray<NSURL *> *c_folders = nil;
  @param path The path to the scene file to load.
  @return A new texture info.
  */
--(id)initWithMeshIndex:(int)aiMeshIndex
-           textureType:(enum aiTextureType)aiTextureType
-               inScene:(const struct aiScene *)aiScene
-                atPath:(NSString*)path
+-(instancetype)initWithMeshIndex:(int)aiMeshIndex
+                         baseURL:(NSURL *)baseURL
+                     textureType:(enum aiTextureType)aiTextureType
+                         inScene:(const struct aiScene *)aiScene
+                          atPath:(NSString*)path
 {
     self = [super init];
     if(self) {
+        self.baseURL = baseURL;
         self.imageSource = NULL;
         self.imageDataProvider = NULL;
         self.image = NULL;
@@ -301,6 +305,22 @@ static NSArray<NSURL *> *c_folders = nil;
         NSURL *fileUrl = [self getFilePathWithBaseURL:content fileName:fileName];
         if (fileUrl) {
             return fileUrl;
+        }
+    }
+    
+    // Check baseURL
+    if (self.baseURL) {
+        if (![self.baseURL isEqual:baseURL]) {
+            if (self.baseURL.hasDirectoryPath) {
+                NSURL *fileUrl = [self getFilePathWithBaseURL:self.baseURL fileName:fileName];
+                if (fileUrl) {
+                    return fileUrl;
+                }
+            } else {
+                if ([self.baseURL.lastPathComponent.lowercaseString isEqualToString:fileName]) {
+                    return self.baseURL;
+                }
+            }
         }
     }
     

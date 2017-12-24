@@ -116,10 +116,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  @return A new scene object, or nil if no scene could be loaded.
  */
 + (SCNAssimpScene *)assimpSceneWithURL:(NSURL *)url
-                    postProcessFlags:(AssimpKitPostProcessSteps)postProcessFlags
+                               baseURL:(NSURL *)baseURL
+                      postProcessFlags:(AssimpKitPostProcessSteps)postProcessFlags
                                  error:(NSError **)error
 {
-    AssimpImporter *assimpImporter = [[AssimpImporter alloc] init];
+    AssimpImporter *assimpImporter = [[AssimpImporter alloc] initWithBaseURL:baseURL];
     return [assimpImporter importScene:url.path
                       postProcessFlags:postProcessFlags
                                  error:error];

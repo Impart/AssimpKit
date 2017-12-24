@@ -58,7 +58,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  @return A new importer.
  */
-- (instancetype _Nonnull)init;
+- (instancetype _Nonnull)initWithBaseURL:(NSURL * _Nullable)baseURL;
 
 #pragma mark - Loading a scene
 /**
@@ -70,7 +70,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  @return A new scene object, or nil if no scene could be loaded.
  */
 - (SCNAssimpScene * _Nullable)importScene:(NSString * _Nonnull)filePath
-               postProcessFlags:(AssimpKitPostProcessSteps)postProcessFlags
-                          error:(NSError * _Nullable * _Nullable)error;
+                         postProcessFlags:(AssimpKitPostProcessSteps)postProcessFlags
+                                    error:(NSError * _Nullable * _Nullable)error;
 
 @end

@@ -44,10 +44,19 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 {
     [super viewDidLoad];
     
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,
+                                                         NSUserDomainMask, YES);
+    NSString *docsDir = [paths objectAtIndex:0];
+    
+    NSURL *texturesUrl = [NSURL URLWithString:[docsDir stringByAppendingString:@"/test/"]];
+    
+    
+    
     // Load the scene
     NSError *error = nil;
     SCNAssimpScene *scene =
         [SCNScene assimpSceneWithURL:[NSURL URLWithString:self.modelFilePath]
+                             baseURL:texturesUrl
                     postProcessFlags:AssimpKit_Process_FlipUVs |
                                      AssimpKit_Process_Triangulate
                                error:&error];
@@ -58,6 +67,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     {
         SCNAssimpScene *animScene =
             [SCNScene assimpSceneWithURL:[NSURL URLWithString:self.animFilePath]
+                                 baseURL:texturesUrl
                         postProcessFlags:AssimpKit_Process_FlipUVs |
                                          AssimpKit_Process_Triangulate
                                    error:&error];

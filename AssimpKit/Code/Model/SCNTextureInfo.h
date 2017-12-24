@@ -58,10 +58,11 @@
  @param path The path to the scene file to load.
  @return A new texture info.
  */
-- (id)initWithMeshIndex:(int)aiMeshIndex
-            textureType:(enum aiTextureType)aiTextureType
-                inScene:(const struct aiScene *)aiScene
-                 atPath:(NSString *)path;
+- (instancetype)initWithMeshIndex:(int)aiMeshIndex
+                          baseURL:(NSURL *)baseURL
+                      textureType:(enum aiTextureType)aiTextureType
+                          inScene:(const struct aiScene *)aiScene
+                           atPath:(NSString *)path;
 
 #pragma mark - Getting texture contents
 /**

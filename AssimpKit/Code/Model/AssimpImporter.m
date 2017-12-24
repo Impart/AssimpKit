@@ -49,6 +49,8 @@ static NSArray<NSString *> *c_supportedExtensions = nil;
 
 #pragma mark - Bone data
 
+@property (nonatomic) NSURL *baseURL;
+
 /**
  @name Bone data
  */
@@ -102,11 +104,12 @@ static NSArray<NSString *> *c_supportedExtensions = nil;
 
  @return A new importer.
  */
-- (id)init
+- (instancetype)initWithBaseURL:(NSURL *)baseURL;
 {
     self = [super init];
     if (self)
     {
+        self.baseURL = baseURL;
         self.boneNames = [[NSMutableArray alloc] init];
         self.boneTransforms = [[NSMutableDictionary alloc] init];
 
@@ -896,6 +899,7 @@ makeIndicesGeometryElementForMeshIndex:(int)aiMeshIndex
                      valueForKey:[NSNumber numberWithInt:i].stringValue]);
             SCNTextureInfo *textureInfo =
                 [[SCNTextureInfo alloc] initWithMeshIndex:aiMeshIndex
+                                                  baseURL:self.baseURL
                                               textureType:textureTypes[i]
                                                   inScene:aiScene
                                                    atPath:path];
