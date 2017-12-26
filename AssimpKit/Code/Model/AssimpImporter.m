@@ -241,7 +241,7 @@ static NSArray<NSString *> *c_supportedExtensions = nil;
                                                withVertices:nVertices
                                                      atPath:path];
     }
-    // node.light = [self makeSCNLightFromAssimpNode:aiNode inScene:aiScene];
+//     node.light = [self makeSCNLightFromAssimpNode:aiNode inScene:aiScene];
 //    node.camera = [self makeSCNCameraFromAssimpNode:aiNode inScene:aiScene];
     [self.boneNames
         addObjectsFromArray:[self getBoneNamesForAssimpNode:aiNode

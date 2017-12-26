@@ -266,7 +266,9 @@ static NSArray<NSURL *> *c_folders = nil;
     }
 }
 
-- (NSString *)generateCGImageForExternalTextureAtBaseURL:(NSURL *)baseURL fileName:(NSString *)fileName {
+- (NSString *)generateCGImageForExternalTextureAtBaseURL:(NSURL *)baseURL fileName:(NSString *)_fileName {
+    NSString *fileName = [_fileName componentsSeparatedByString:@"\\"].lastObject.lowercaseString;
+    
     DLog(@" Generating external texture");
     NSURL *realImageUrl = [self getFilePathWithBaseURL:baseURL fileName:fileName];
     
@@ -275,14 +277,24 @@ static NSArray<NSURL *> *c_folders = nil;
         realImageUrl = [self getFilePathWithBaseURL:baseURL fileName:fixedFileName];
     }
     
+//    if (!realImageUrl && (![fileName.pathExtension.lowercaseString isEqualToString:@"png"] || [fileName.pathExtension.lowercaseString isEqualToString:@"jpg"])) {
+//        NSRange extensionRange = [fileName rangeOfString:fileName.pathExtension options:NSBackwardsSearch];
+//        NSString *pngFileName = [fileName stringByReplacingCharactersInRange:extensionRange withString:@"png"];
+//        realImageUrl = [self getFilePathWithBaseURL:baseURL fileName:pngFileName];
+//
+//        if (!realImageUrl) {
+//            NSString *jpgFileName = [fileName stringByReplacingCharactersInRange:extensionRange withString:@"jpg"];
+//            realImageUrl = [self getFilePathWithBaseURL:baseURL fileName:jpgFileName];
+//        }
+//    }
+    
     self.imageSource = CGImageSourceCreateWithURL((CFURLRef)realImageUrl, NULL);
     self.image = CGImageSourceCreateImageAtIndex(self.imageSource, 0, NULL);
     
     return realImageUrl.path;
 }
 
-- (NSURL *)getFilePathWithBaseURL:(NSURL *)baseURL fileName:(NSString *)_fileName {
-    NSString *fileName = _fileName.lowercaseString;
+- (NSURL *)getFilePathWithBaseURL:(NSURL *)baseURL fileName:(NSString *)fileName {
     NSURL *fileURL = [self getFilePathRecursiveWithBaseURL:baseURL fileName:fileName];
     if (fileURL) {
         return fileURL;

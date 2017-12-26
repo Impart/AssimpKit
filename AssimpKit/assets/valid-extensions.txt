@@ -26,5 +26,6 @@ raw
 smd
 stl
 wrl
+x3d
 xgl
 zgl
