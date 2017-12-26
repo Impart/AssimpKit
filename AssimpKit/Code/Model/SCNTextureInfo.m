@@ -277,17 +277,6 @@ static NSArray<NSURL *> *c_folders = nil;
         realImageUrl = [self getFilePathWithBaseURL:baseURL fileName:fixedFileName];
     }
     
-//    if (!realImageUrl && (![fileName.pathExtension.lowercaseString isEqualToString:@"png"] || [fileName.pathExtension.lowercaseString isEqualToString:@"jpg"])) {
-//        NSRange extensionRange = [fileName rangeOfString:fileName.pathExtension options:NSBackwardsSearch];
-//        NSString *pngFileName = [fileName stringByReplacingCharactersInRange:extensionRange withString:@"png"];
-//        realImageUrl = [self getFilePathWithBaseURL:baseURL fileName:pngFileName];
-//
-//        if (!realImageUrl) {
-//            NSString *jpgFileName = [fileName stringByReplacingCharactersInRange:extensionRange withString:@"jpg"];
-//            realImageUrl = [self getFilePathWithBaseURL:baseURL fileName:jpgFileName];
-//        }
-//    }
-    
     self.imageSource = CGImageSourceCreateWithURL((CFURLRef)realImageUrl, NULL);
     self.image = CGImageSourceCreateImageAtIndex(self.imageSource, 0, NULL);
     
