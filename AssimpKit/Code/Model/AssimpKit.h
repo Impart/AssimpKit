@@ -1,0 +1,6 @@
+#import "PostProcessingFlags.h"
+#import "SCNAssimpAnimation.h"
+#import "SCNAssimpAnimSettings.h"
+#import "SCNAssimpScene.h"
+#import "SCNNode+AssimpImport.h"
+#import "SCNScene+AssimpImport.h"
