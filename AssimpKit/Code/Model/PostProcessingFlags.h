@@ -33,6 +33,8 @@
  ---------------------------------------------------------------------------
  */
 
+@import Foundation;
+
 /**
  Defines the flags for all possible post processing steps.
 
