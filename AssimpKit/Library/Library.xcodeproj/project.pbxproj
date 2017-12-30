@@ -57,8 +57,8 @@
 		77FB46341F59751900C73D50 /* SCNTextureInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 77FB46321F59751900C73D50 /* SCNTextureInfo.m */; };
 		77FF141B1F5843360041F4FA /* libIrrXML-fat.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 77FF141A1F5843360041F4FA /* libIrrXML-fat.a */; };
 		77FF141F1F58433D0041F4FA /* libIrrXML.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 77FF141E1F58433D0041F4FA /* libIrrXML.a */; };
-		B032658A1FF801800021CFE4 /* AssimpKit.h in Headers */ = {isa = PBXBuildFile; fileRef = B03265891FF801800021CFE4 /* AssimpKit.h */; };
-		B032658C1FF801860021CFE4 /* AssimpKit.h in Headers */ = {isa = PBXBuildFile; fileRef = B032658B1FF801860021CFE4 /* AssimpKit.h */; };
+		B032658A1FF801800021CFE4 /* AssimpKit.h in Headers */ = {isa = PBXBuildFile; fileRef = B03265891FF801800021CFE4 /* AssimpKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B032658C1FF801860021CFE4 /* AssimpKit.h in Headers */ = {isa = PBXBuildFile; fileRef = B032658B1FF801860021CFE4 /* AssimpKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -334,11 +334,11 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B032658A1FF801800021CFE4 /* AssimpKit.h in Headers */,
 				779DF1E81DDF2A5700DED366 /* AssimpSceneKit-Prefix.pch in Headers */,
 				779DF1EB1DDF2A5700DED366 /* SCNAssimpScene.h in Headers */,
 				77EB2B901E17773B004FA171 /* SCNNode+AssimpImport.h in Headers */,
 				779DF1ED1DDF2A5700DED366 /* SCNScene+AssimpImport.h in Headers */,
+				B032658A1FF801800021CFE4 /* AssimpKit.h in Headers */,
 				779DF1E91DDF2A5700DED366 /* SCNAssimpAnimation.h in Headers */,
 				779DF1E61DDF2A5700DED366 /* AssimpImporter.h in Headers */,
 				7746DB5D1DEEBFE600C651DC /* PostProcessingFlags.h in Headers */,
@@ -351,9 +351,9 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B032658C1FF801860021CFE4 /* AssimpKit.h in Headers */,
 				779DF20E1DDF2BB000DED366 /* AssimpSceneKit-Prefix.pch in Headers */,
 				779DF2111DDF2BB000DED366 /* SCNAssimpScene.h in Headers */,
+				B032658C1FF801860021CFE4 /* AssimpKit.h in Headers */,
 				779DF2131DDF2BB000DED366 /* SCNScene+AssimpImport.h in Headers */,
 				77EB2B8A1E1776EB004FA171 /* SCNNode+AssimpImport.h in Headers */,
 				779DF20F1DDF2BB000DED366 /* SCNAssimpAnimation.h in Headers */,
