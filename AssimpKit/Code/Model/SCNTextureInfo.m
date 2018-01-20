@@ -277,6 +277,12 @@ static NSArray<NSURL *> *c_folders = nil;
         realImageUrl = [self getFilePathWithBaseURL:baseURL fileName:fixedFileName];
     }
     
+//    if (!realImageUrl) {
+//        // Sketchfab just appending .png to previous image name
+//        NSString *fixedFileName = [fileName stringByAppendingString:@".png"];
+//        realImageUrl = [self getFilePathWithBaseURL:baseURL fileName:fixedFileName];
+//    }
+    
     self.imageSource = CGImageSourceCreateWithURL((CFURLRef)realImageUrl, NULL);
     self.image = CGImageSourceCreateImageAtIndex(self.imageSource, 0, NULL);
     

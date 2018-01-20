@@ -48,17 +48,17 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                          NSUserDomainMask, YES);
     NSString *docsDir = [paths objectAtIndex:0];
     
-    NSURL *texturesUrl = [NSURL URLWithString:[docsDir stringByAppendingString:@"/test/"]];
-    
-    
+    NSURL *baseUrl = [NSURL URLWithString:[docsDir stringByAppendingString:@"/models/"]];
     
     // Load the scene
     NSError *error = nil;
     SCNAssimpScene *scene =
-        [SCNScene assimpSceneWithURL:[NSURL URLWithString:self.modelFilePath]
-                             baseURL:texturesUrl
+        [SCNScene assimpSceneWithURL:[NSURL fileURLWithPath:self.modelFilePath]
+                             baseURL:baseUrl
                     postProcessFlags:AssimpKit_Process_FlipUVs |
-                                     AssimpKit_Process_Triangulate
+         AssimpKit_Process_OptimizeGraph |
+                                     AssimpKit_Process_Triangulate// |
+//         AssimpKit_Process_Debone
                                error:&error];
     [self showErrorIfNeeded:error];
 
@@ -66,10 +66,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     if (self.animFilePath)
     {
         SCNAssimpScene *animScene =
-            [SCNScene assimpSceneWithURL:[NSURL URLWithString:self.animFilePath]
-                                 baseURL:texturesUrl
+            [SCNScene assimpSceneWithURL:[NSURL fileURLWithPath:self.animFilePath]
+                                 baseURL:baseUrl
                         postProcessFlags:AssimpKit_Process_FlipUVs |
-                                         AssimpKit_Process_Triangulate
+             AssimpKit_Process_Triangulate //|
+//             AssimpKit_Process_Debone
                                    error:&error];
         [self showErrorIfNeeded:error];
         NSArray *animationKeys = animScene.animationKeys;
@@ -78,7 +79,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         {
             SCNAssimpAnimSettings *settings =
                 [[SCNAssimpAnimSettings alloc] init];
-            settings.repeatCount = 3;
+            settings.repeatCount = FLT_MAX;
 
             NSString *key = [animationKeys objectAtIndex:0];
             SCNAnimationEventBlock eventBlock =

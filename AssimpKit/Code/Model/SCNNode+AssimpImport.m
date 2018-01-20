@@ -324,7 +324,7 @@
           *stop = YES;
       }
     }];
-    return rootAnimNode;
+    return [rootAnimNode parentNode] ?: rootAnimNode;
 }
 
 @end
