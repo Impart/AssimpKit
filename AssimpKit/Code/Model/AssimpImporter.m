@@ -1458,7 +1458,8 @@ makeBoneWeightsGeometrySourceAtNode:(const struct aiNode *)aiNode
                        withVertices:(int)nVertices
                          maxWeights:(int)maxWeights
 {
-    float nodeGeometryWeights[nVertices * maxWeights];
+    float* nodeGeometryWeights;
+    nodeGeometryWeights = malloc((nVertices * maxWeights)*sizeof(float*));
     int weightCounter = 0;
 
     for (int i = 0; i < aiNode->mNumMeshes; i++)
@@ -1525,6 +1526,9 @@ makeBoneWeightsGeometrySourceAtNode:(const struct aiNode *)aiNode
              bytesPerComponent:sizeof(float)
                     dataOffset:0
                     dataStride:maxWeights * sizeof(float)];
+    
+    free(nodeGeometryWeights);
+    
     return boneWeightsSource;
 }
 
@@ -1547,7 +1551,9 @@ makeBoneIndicesGeometrySourceAtNode:(const struct aiNode *)aiNode
                           boneNames:(NSArray *)boneNames
 {
     DLog(@" |--| Making bone indices geometry source: %@", boneNames);
-    short nodeGeometryBoneIndices[nVertices * maxWeights];
+    
+    short* nodeGeometryBoneIndices;
+    nodeGeometryBoneIndices = malloc((nVertices * maxWeights)*sizeof(short*));
     int indexCounter = 0;
 
     for (int i = 0; i < aiNode->mNumMeshes; i++)
@@ -1619,6 +1625,9 @@ makeBoneIndicesGeometrySourceAtNode:(const struct aiNode *)aiNode
              bytesPerComponent:sizeof(short)
                     dataOffset:0
                     dataStride:maxWeights * sizeof(short)];
+    
+    free(nodeGeometryBoneIndices);
+    
     return boneIndicesSource;
 }
 

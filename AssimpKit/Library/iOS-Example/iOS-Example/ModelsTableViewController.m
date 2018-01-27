@@ -59,9 +59,9 @@
                                                          NSUserDomainMask, YES);
     NSString *docsDir = [paths objectAtIndex:0];
     
-    [SCNAssimpScene setTexturesFolders:@[[NSURL URLWithString:[docsDir stringByAppendingString:@"/textures/"]]]];
+    [SCNAssimpScene setTexturesFolders:@[[NSURL fileURLWithPath:docsDir isDirectory:YES]]];
     
-    self.docsDir = [docsDir stringByAppendingString:@"/models/"];
+    self.docsDir = [docsDir stringByAppendingString:@"/"];
     
     NSLog(@"Models directory: %@", self.docsDir);
     

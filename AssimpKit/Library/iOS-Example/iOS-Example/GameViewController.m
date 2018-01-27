@@ -48,7 +48,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                          NSUserDomainMask, YES);
     NSString *docsDir = [paths objectAtIndex:0];
     
-    NSURL *baseUrl = [NSURL URLWithString:[docsDir stringByAppendingString:@"/models/"]];
+    NSURL *baseUrl = [NSURL fileURLWithPath:docsDir];
     
     // Load the scene
     NSError *error = nil;
@@ -56,7 +56,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         [SCNScene assimpSceneWithURL:[NSURL fileURLWithPath:self.modelFilePath]
                              baseURL:baseUrl
                     postProcessFlags:AssimpKit_Process_FlipUVs |
-         AssimpKit_Process_OptimizeGraph |
+//         AssimpKit_Process_OptimizeGraph |
                                      AssimpKit_Process_Triangulate// |
 //         AssimpKit_Process_Debone
                                error:&error];
