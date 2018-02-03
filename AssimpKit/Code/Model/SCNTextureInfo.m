@@ -37,7 +37,7 @@ static NSArray<NSURL *> *c_folders = nil;
 
 #import "SCNTextureInfo.h"
 #import <ImageIO/ImageIO.h>
-#import <CoreImage/CoreImage.h>
+@import UIKit;
 
 @interface SCNTextureInfo ()
 
@@ -98,23 +98,10 @@ static NSArray<NSURL *> *c_folders = nil;
 #pragma mark - Texture image resources
 
 /**
- An opaque type that represents the external texture image source.
- */
-@property CGImageSourceRef imageSource;
-
-
-/**
- An abstraction for the raw image data of an embedded texture image source that 
- eliminates the need to manage raw memory buffer.
- */
-@property CGDataProviderRef imageDataProvider;
-
-
-/**
  A bitmap image representing either an external or embedded texture applied to 
  a material property.
  */
-@property CGImageRef image;
+@property UIImage *image;
 
 @end
 
@@ -146,9 +133,7 @@ static NSArray<NSURL *> *c_folders = nil;
     self = [super init];
     if(self) {
         self.baseURL = baseURL;
-        self.imageSource = NULL;
-        self.imageDataProvider = NULL;
-        self.image = NULL;
+        self.image = nil;
         self.colorSpace = NULL;
         self.color = NULL;
         const struct aiMesh *aiMesh = aiScene->mMeshes[aiMeshIndex];
@@ -251,34 +236,37 @@ static NSArray<NSURL *> *c_folders = nil;
     const struct aiTexture *aiTexture = aiScene->mTextures[index];
     NSData *imageData = [NSData dataWithBytes:aiTexture->pcData
                                        length:aiTexture->mWidth];
-    self.imageDataProvider =
-        CGDataProviderCreateWithCFData((CFDataRef)imageData);
-    NSString* format = [NSString stringWithUTF8String:aiTexture->achFormatHint];
-    if([format isEqualToString:@"png"]) {
-        DLog(@" Created png embedded texture ");
-        self.image = CGImageCreateWithPNGDataProvider(
-            self.imageDataProvider, NULL, true, kCGRenderingIntentDefault);
-    }
-    if([format isEqualToString:@"jpg"]) {
-        DLog(@" Created jpg embedded texture");
-        self.image = CGImageCreateWithJPEGDataProvider(
-            self.imageDataProvider, NULL, true, kCGRenderingIntentDefault);
-    }
+    
+    self.image = [UIImage imageWithData:imageData];
 }
 
 - (NSString *)generateCGImageForExternalTextureAtBaseURL:(NSURL *)baseURL fileName:(NSString *)_fileName {
-    NSString *fileName = [_fileName componentsSeparatedByString:@"\\"].lastObject.lowercaseString;
+    NSString *fileName = [[_fileName componentsSeparatedByString:@"\\"].lastObject lowercaseString];
     
     DLog(@" Generating external texture");
     NSURL *realImageUrl = [self getFilePathWithBaseURL:baseURL fileName:fileName];
     
-    if (!realImageUrl && [fileName containsString:@"_"]) {
-        NSString *fixedFileName = [fileName stringByReplacingOccurrencesOfString:@"_" withString:@"-"];
-        realImageUrl = [self getFilePathWithBaseURL:baseURL fileName:fixedFileName];
+    if (!realImageUrl) {
+        // 3DS cuts texture names to 12 symbols.
+        // Example: HAIR_CO_HR_N_14.tga -> HAIR_CO_HR_N.000
+        // Try to restore real texture name here.
+        NSMutableArray<NSString *> *dotComponents = [[fileName componentsSeparatedByString:@"."] mutableCopy];
+        if ([[dotComponents lastObject] hasPrefix:@"00"]) {
+            [dotComponents removeLastObject];
+            NSLog(@"Invalid name: %@", _fileName);
+            NSString *fileNamePrefix = [dotComponents componentsJoinedByString:@"."];
+            realImageUrl = [self getFilePathWithBaseURL:baseURL fileName:fileNamePrefix];
+        }
     }
     
-    self.imageSource = CGImageSourceCreateWithURL((CFURLRef)realImageUrl, NULL);
-    self.image = CGImageSourceCreateImageAtIndex(self.imageSource, 0, NULL);
+    if (realImageUrl) {
+        self.image = [UIImage imageWithContentsOfFile:realImageUrl.path];
+        if (!self.image) {
+            ELog(@"Can not create image: %@:", realImageUrl);
+        }
+    } else {
+        ELog(@"Can not find image: %@:", _fileName);
+    }
     
     return realImageUrl.path;
 }
@@ -422,15 +410,6 @@ static NSArray<NSURL *> *c_folders = nil;
  This method must be called by the client to avoid memory leaks!
  */
 -(void)releaseContents {
-    if(self.imageSource != NULL) {
-        CFRelease(self.imageSource);
-    }
-    if(self.imageDataProvider != NULL) {
-        CGDataProviderRelease(self.imageDataProvider);
-    }
-    if(self.image != NULL) {
-        CGImageRelease(self.image);
-    }
     if(self.colorSpace != NULL)
     {
         CGColorSpaceRelease(self.colorSpace);

@@ -74,7 +74,7 @@
                                         forIndexPath:indexPath];
 
     // Configure the cell...
-    cell.textLabel.text = [self.modelFiles objectAtIndex:indexPath.row];
+    cell.textLabel.text = [[self.modelFiles objectAtIndex:indexPath.row] lastPathComponent];
     return cell;
 }
 

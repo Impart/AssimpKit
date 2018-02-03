@@ -55,7 +55,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     SCNAssimpScene *scene =
         [SCNScene assimpSceneWithURL:[NSURL fileURLWithPath:self.modelFilePath]
                              baseURL:baseUrl
-                    postProcessFlags:AssimpKit_Process_FlipUVs |
+                    postProcessFlags:
+         AssimpKit_Process_FlipUVs |
 //         AssimpKit_Process_OptimizeGraph |
                                      AssimpKit_Process_Triangulate// |
 //         AssimpKit_Process_Debone

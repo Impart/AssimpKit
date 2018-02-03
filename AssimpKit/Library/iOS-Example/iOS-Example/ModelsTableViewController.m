@@ -63,7 +63,7 @@
     
     self.docsDir = [docsDir stringByAppendingString:@"/"];
     
-    NSLog(@"Models directory: %@", self.docsDir);
+    NSLog(@"Models directory: open %@", self.docsDir);
     
     NSArray *files = [[NSFileManager defaultManager] subpathsAtPath:self.docsDir];
     NSMutableArray *modelFiles = [[NSMutableArray alloc] init];
@@ -104,7 +104,7 @@
                                         forIndexPath:indexPath];
 
     // Configure the cell...
-    cell.textLabel.text = [self.modelFiles objectAtIndex:indexPath.row];
+    cell.textLabel.text = [[self.modelFiles objectAtIndex:indexPath.row] lastPathComponent];
     return cell;
 }
 
