@@ -213,6 +213,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 779DF1D81DDF29F200DED366 /* Build configuration list for PBXNativeTarget "AssimpKit-iOS" */;
 			buildPhases = (
+				B0C003202026202E0035B591 /* Unzip libraries */,
 				779DF1CE1DDF29F200DED366 /* Sources */,
 				779DF1CF1DDF29F200DED366 /* Frameworks */,
 				779DF1D01DDF29F200DED366 /* Headers */,
@@ -317,6 +318,23 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		B0C003202026202E0035B591 /* Unzip libraries */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 12;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Unzip libraries";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "#!/bin/sh\n\necho \"Extracting iOS fat lib...\"\nif ! [ -x \"$(command -v 7z)\" ]; then\n  echo \"error: 7z is not installed.\"\n  echo \"fix: Install 7z with brew ...\"\n  echo \"fix: Please run: brew install p7zip\"\n  exit 1\nfi\n\ncd \"$PROJECT_DIR\"\n\n7z x \"$PROJECT_DIR/../Assimp/lib/ios/libassimp-fat.7z\"\nyes | mv \"$PROJECT_DIR/libassimp-fat.a\" \"$PROJECT_DIR/../Assimp/lib/ios/\"\n\n7z x \"$PROJECT_DIR/../Assimp/lib/ios/libIrrXML-fat.7z\"\nyes | mv \"$PROJECT_DIR/libIrrXML-fat.a\" \"$PROJECT_DIR/../Assimp/lib/ios/\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		779DF1CE1DDF29F200DED366 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -384,7 +402,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				ONLY_ACTIVE_ARCH = YES;
-				VALID_ARCHS = x86_64;
+				VALID_ARCHS = arm64;
 			};
 			name = Debug;
 		};
@@ -416,7 +434,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
-				VALID_ARCHS = x86_64;
+				VALID_ARCHS = arm64;
 			};
 			name = Release;
 		};
@@ -490,7 +508,6 @@
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/../Assimp/include";
-				VALID_ARCHS = arm64;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -560,7 +577,6 @@
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/../Assimp/include";
 				VALIDATE_PRODUCT = YES;
-				VALID_ARCHS = arm64;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
