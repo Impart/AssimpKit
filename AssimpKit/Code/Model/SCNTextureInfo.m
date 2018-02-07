@@ -33,11 +33,18 @@
  ---------------------------------------------------------------------------
  */
 
-static NSArray<NSURL *> *c_folders = nil;
-
 #import "SCNTextureInfo.h"
 #import <ImageIO/ImageIO.h>
 @import UIKit;
+
+static NSArray<NSURL *> *c_folders = nil;
+
+typedef enum : NSUInteger {
+    MatchTypeExact,
+    MatchTypeSameName,
+    MatchTypeStartsWith,
+} MatchType;
+
 
 @interface SCNTextureInfo ()
 
@@ -107,6 +114,7 @@ static NSArray<NSURL *> *c_folders = nil;
 
 #pragma mark -
 
+// TODO: Add aiTextureType_SHININESS handling
 @implementation SCNTextureInfo
 
 + (void)setTexturesFolders:(NSArray<NSURL *> *)folders {
@@ -241,21 +249,18 @@ static NSArray<NSURL *> *c_folders = nil;
 }
 
 - (NSString *)generateCGImageForExternalTextureAtBaseURL:(NSURL *)baseURL fileName:(NSString *)_fileName {
-    NSString *fileName = [[_fileName componentsSeparatedByString:@"\\"].lastObject lowercaseString];
+    NSString *fileNameWithExtension = [[_fileName componentsSeparatedByString:@"\\"].lastObject lowercaseString];
     
     DLog(@" Generating external texture");
-    NSURL *realImageUrl = [self getFilePathWithBaseURL:baseURL fileName:fileName];
+    NSURL *realImageUrl = [self getFilePathWithBaseURL:baseURL fileName:fileNameWithExtension matchType:MatchTypeExact];
     
     if (!realImageUrl) {
-        // 3DS cuts texture names to 12 symbols.
-        // Example: HAIR_CO_HR_N_14.tga -> HAIR_CO_HR_N.000
-        // Try to restore real texture name here.
-        NSMutableArray<NSString *> *dotComponents = [[fileName componentsSeparatedByString:@"."] mutableCopy];
-        if ([[dotComponents lastObject] hasPrefix:@"00"]) {
-            [dotComponents removeLastObject];
-            NSLog(@"Invalid name: %@", _fileName);
-            NSString *fileNamePrefix = [dotComponents componentsJoinedByString:@"."];
-            realImageUrl = [self getFilePathWithBaseURL:baseURL fileName:fileNamePrefix];
+        ELog(@"Try to recover from invalid name: %@", _fileName);
+        NSString *fileName = [fileNameWithExtension componentsSeparatedByString:@"."].firstObject;
+        realImageUrl = [self getFilePathWithBaseURL:baseURL fileName:fileName matchType:MatchTypeSameName];
+        
+        if (!realImageUrl) {
+            realImageUrl = [self getFilePathWithBaseURL:baseURL fileName:fileName matchType:MatchTypeStartsWith];
         }
     }
     
@@ -271,8 +276,8 @@ static NSArray<NSURL *> *c_folders = nil;
     return realImageUrl.path;
 }
 
-- (NSURL *)getFilePathWithBaseURL:(NSURL *)baseURL fileName:(NSString *)fileName {
-    NSURL *fileURL = [self getFilePathRecursiveWithBaseURL:baseURL fileName:fileName];
+- (NSURL *)getFilePathWithBaseURL:(NSURL *)baseURL fileName:(NSString *)fileName matchType:(MatchType)matchType {
+    NSURL *fileURL = [self getFilePathRecursiveWithBaseURL:baseURL fileName:fileName matchType:matchType];
     if (fileURL) {
         return fileURL;
     }
@@ -281,7 +286,7 @@ static NSArray<NSURL *> *c_folders = nil;
     if (self.baseURL) {
         if (![self.baseURL isEqual:baseURL]) {
             if (self.baseURL.hasDirectoryPath) {
-                NSURL *fileUrl = [self getFilePathRecursiveWithBaseURL:self.baseURL fileName:fileName];
+                NSURL *fileUrl = [self getFilePathRecursiveWithBaseURL:self.baseURL fileName:fileName matchType:matchType];
                 if (fileUrl) {
                     return fileUrl;
                 }
@@ -307,7 +312,7 @@ static NSArray<NSURL *> *c_folders = nil;
             }
         }
         
-        NSURL *fileUrl = [self getFilePathRecursiveWithBaseURL:folder fileName:fileName];
+        NSURL *fileUrl = [self getFilePathRecursiveWithBaseURL:folder fileName:fileName matchType:matchType];
         if (fileUrl) {
             return fileUrl;
         }
@@ -316,7 +321,7 @@ static NSArray<NSURL *> *c_folders = nil;
     return nil;
 }
 
-- (NSURL *)getFilePathRecursiveWithBaseURL:(NSURL *)baseURL fileName:(NSString *)fileName {
+- (NSURL *)getFilePathRecursiveWithBaseURL:(NSURL *)baseURL fileName:(NSString *)fileName matchType:(MatchType)matchType {
     NSArray<NSURL *> *contents = [NSFileManager.defaultManager contentsOfDirectoryAtURL:baseURL includingPropertiesForKeys:nil options:0 error:nil];
     
     // Check files first
@@ -325,7 +330,7 @@ static NSArray<NSURL *> *c_folders = nil;
             continue;
         }
         
-        if ([content.lastPathComponent.lowercaseString hasPrefix:fileName]) {
+        if ([self isFile:content hasName:fileName matchType:matchType]) {
             return content;
         }
     }
@@ -336,13 +341,27 @@ static NSArray<NSURL *> *c_folders = nil;
             continue;
         }
         
-        NSURL *fileUrl = [self getFilePathRecursiveWithBaseURL:content fileName:fileName];
+        NSURL *fileUrl = [self getFilePathRecursiveWithBaseURL:content fileName:fileName matchType:matchType];
         if (fileUrl) {
             return fileUrl;
         }
     }
     
     return nil;
+}
+
+- (BOOL)isFile:(NSURL *)fileUrl hasName:(NSString *)fileName matchType:(MatchType)matchType {
+    // 3DS cuts texture names to 12 symbols.
+    // Example: HAIR_CO_HR_N_14.tga -> HAIR_CO_HR_N.000
+    
+    // Sketchfab just appending .png to previous image name
+    // Example: image.jpg -> image.jpg.png
+    
+    switch (matchType) {
+        case MatchTypeExact: return [fileUrl.lastPathComponent.lowercaseString isEqualToString:fileName];
+        case MatchTypeSameName: return [[fileUrl.lastPathComponent componentsSeparatedByString:@"."].firstObject.lowercaseString isEqualToString:fileName];
+        case MatchTypeStartsWith: return [[fileUrl.lastPathComponent componentsSeparatedByString:@"."].firstObject.lowercaseString hasPrefix:fileName];
+    }
 }
 
 #pragma mark - Extract color
@@ -359,27 +378,23 @@ static NSArray<NSURL *> *c_folders = nil;
     if(aiTextureType == aiTextureType_DIFFUSE) {
         matColor =
         aiGetMaterialColor(aiMaterial, AI_MATKEY_COLOR_DIFFUSE, &color);
-    }
-    if(aiTextureType == aiTextureType_SPECULAR) {
+    } else if(aiTextureType == aiTextureType_SPECULAR) {
         matColor =
         aiGetMaterialColor(aiMaterial, AI_MATKEY_COLOR_SPECULAR, &color);
-    }
-    if(aiTextureType == aiTextureType_AMBIENT) {
+    } else if(aiTextureType == aiTextureType_AMBIENT) {
         matColor =
         aiGetMaterialColor(aiMaterial, AI_MATKEY_COLOR_AMBIENT, &color);
-    }
-    if(aiTextureType == aiTextureType_REFLECTION) {
+    } else if(aiTextureType == aiTextureType_REFLECTION) {
         matColor =
         aiGetMaterialColor(aiMaterial, AI_MATKEY_COLOR_REFLECTIVE, &color);
-    }
-    if(aiTextureType == aiTextureType_EMISSIVE) {
+    } else if(aiTextureType == aiTextureType_EMISSIVE) {
         matColor =
         aiGetMaterialColor(aiMaterial, AI_MATKEY_COLOR_EMISSIVE, &color);
-    }
-    if(aiTextureType == aiTextureType_OPACITY) {
+    } else if(aiTextureType == aiTextureType_OPACITY) {
         matColor =
         aiGetMaterialColor(aiMaterial, AI_MATKEY_COLOR_TRANSPARENT, &color);
     }
+    
     if (AI_SUCCESS == matColor)
     {
             self.colorSpace = CGColorSpaceCreateDeviceRGB();

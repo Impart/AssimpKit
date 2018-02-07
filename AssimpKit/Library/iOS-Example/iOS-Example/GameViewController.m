@@ -57,6 +57,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                              baseURL:baseUrl
                     postProcessFlags:
          AssimpKit_Process_FlipUVs |
+         AssimpKit_JoinIdenticalVertices |
 //         AssimpKit_Process_OptimizeGraph |
                                      AssimpKit_Process_Triangulate// |
 //         AssimpKit_Process_Debone
@@ -70,6 +71,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             [SCNScene assimpSceneWithURL:[NSURL fileURLWithPath:self.animFilePath]
                                  baseURL:baseUrl
                         postProcessFlags:AssimpKit_Process_FlipUVs |
+             AssimpKit_JoinIdenticalVertices |
              AssimpKit_Process_Triangulate //|
 //             AssimpKit_Process_Debone
                                    error:&error];
@@ -83,27 +85,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             settings.repeatCount = FLT_MAX;
 
             NSString *key = [animationKeys objectAtIndex:0];
-            SCNAnimationEventBlock eventBlock =
-                ^(CAAnimation *animation, id animatedObject,
-                  BOOL playingBackward) {
-                  NSLog(@" Animation Event triggered ");
-
-                  // To test removing animation uncomment
-                  // Then the animation wont repeat 3 times
-                  // as it will be removed after 90% of the first loop
-                  // is completed, as event key time is 0.9
-                  // [scene.rootNode removeAnimationSceneForKey:key
-                  //                            fadeOutDuration:0.3];
-                  // [scene.rootNode pauseAnimationSceneForKey:key];
-                  // [scene.rootNode resumeAnimationSceneForKey:key];
-                };
-            SCNAnimationEvent *animEvent =
-                [SCNAnimationEvent animationEventWithKeyTime:0.1f
-                                                       block:eventBlock];
-            NSArray *animEvents =
-                [[NSArray alloc] initWithObjects:animEvent, nil];
-            settings.animationEvents = animEvents;
-            settings.delegate = self;
 
             SCNScene *animation = [animScene animationSceneForKey:key];
             [scene.modelScene.rootNode addAnimationScene:animation
@@ -117,16 +98,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     // set the scene to the view
     scnView.scene = scene.modelScene;
-}
-
-- (void)animationDidStart:(CAAnimation *)anim
-{
-    NSLog(@" animation did start...");
-}
-
-- (void)animationDidStop:(CAAnimation *)anim finished:(BOOL)flag
-{
-    NSLog(@" animation did stop...");
 }
 
 - (BOOL)shouldAutorotate
@@ -150,12 +121,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     {
         return UIInterfaceOrientationMaskAll;
     }
-}
-
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Release any cached data, images, etc that aren't in use.
 }
 
 - (void)showErrorIfNeeded:(NSError *)error

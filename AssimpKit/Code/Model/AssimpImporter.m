@@ -763,7 +763,7 @@ makeIndicesGeometryElementForMeshIndex:(int)aiMeshIndex
     else if (textureInfo.textureType == aiTextureType_EMISSIVE)
     {
         material.emission.contents = [textureInfo getMaterialPropertyContents];
-        keyPrefix = @"emissive";
+        keyPrefix = @"emission";
     }
     else if (textureInfo.textureType == aiTextureType_OPACITY)
     {
@@ -791,6 +791,14 @@ makeIndicesGeometryElementForMeshIndex:(int)aiMeshIndex
         material.ambientOcclusion.contents =
             [textureInfo getMaterialPropertyContents];
         keyPrefix = @"ambientOcclusion";
+    }
+    else if (textureInfo.textureType == aiTextureType_SHININESS)
+    {
+        // TODO: Add
+    }
+    else
+    {
+        ELog(@"Got unknown texture type");
     }
     
     if (!keyPrefix.length) {
@@ -1695,9 +1703,10 @@ makeBoneIndicesGeometrySourceAtNode:(const struct aiNode *)aiNode
                                          withVertices:nVertices
                                            maxWeights:maxWeights
                                             boneNames:self.uniqueBoneNames];
-
+        
         SCNNode *node =
             [scene.rootNode childNodeWithName:nodeName recursively:YES];
+        
         SCNSkinner *skinner =
             [SCNSkinner skinnerWithBaseGeometry:node.geometry
                                           bones:self.uniqueBoneNodes

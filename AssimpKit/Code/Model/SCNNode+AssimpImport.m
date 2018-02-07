@@ -100,7 +100,12 @@
             [self childNodeWithName:boneName recursively:YES];
         NSString *key = [[nodeAnimKey stringByAppendingString:@"-"]
             stringByAppendingString:animKey];
-        [sceneBoneNode addAnimation:animation forKey:key];
+        
+        if (sceneBoneNode) {
+            [sceneBoneNode addAnimation:animation forKey:key];
+        } else {
+            ELog(@"Can not find bone: %@", boneName);
+        }
     }
     for (SCNNode *childNode in animNode.childNodes)
     {

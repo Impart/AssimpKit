@@ -43,11 +43,7 @@
     #	define DLog(...)
     #endif
 
-    #ifdef DEBUG
-    #	define ELog(fmt, ...) NSLog(fmt, ##__VA_ARGS__);
-    #else
-    #	define ELog(...)
-    #endif
+    #define ELog(fmt, ...) NSLog(fmt, ##__VA_ARGS__);
 
     // ALog always displays output regardless of the DEBUG setting
     #define ALog(fmt, ...) NSLog((@"%s [Line %d] " fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__);
