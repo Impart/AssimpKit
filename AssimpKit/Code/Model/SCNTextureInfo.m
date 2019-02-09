@@ -376,23 +376,18 @@ typedef enum : NSUInteger {
     color.b = 0.0f;
     int matColor = -100;
     if(aiTextureType == aiTextureType_DIFFUSE) {
-        matColor =
-        aiGetMaterialColor(aiMaterial, AI_MATKEY_COLOR_DIFFUSE, &color);
+        matColor = aiGetMaterialColor(aiMaterial, AI_MATKEY_COLOR_DIFFUSE, &color);
     } else if(aiTextureType == aiTextureType_SPECULAR) {
-        matColor =
-        aiGetMaterialColor(aiMaterial, AI_MATKEY_COLOR_SPECULAR, &color);
+        matColor = aiGetMaterialColor(aiMaterial, AI_MATKEY_COLOR_SPECULAR, &color);
     } else if(aiTextureType == aiTextureType_AMBIENT) {
-        matColor =
-        aiGetMaterialColor(aiMaterial, AI_MATKEY_COLOR_AMBIENT, &color);
+        matColor = aiGetMaterialColor(aiMaterial, AI_MATKEY_COLOR_AMBIENT, &color);
     } else if(aiTextureType == aiTextureType_REFLECTION) {
-        matColor =
-        aiGetMaterialColor(aiMaterial, AI_MATKEY_COLOR_REFLECTIVE, &color);
+        // Ignore reflection. It just overlays with white.
+//        matColor = aiGetMaterialColor(aiMaterial, AI_MATKEY_COLOR_REFLECTIVE, &color);
     } else if(aiTextureType == aiTextureType_EMISSIVE) {
-        matColor =
-        aiGetMaterialColor(aiMaterial, AI_MATKEY_COLOR_EMISSIVE, &color);
+        matColor = aiGetMaterialColor(aiMaterial, AI_MATKEY_COLOR_EMISSIVE, &color);
     } else if(aiTextureType == aiTextureType_OPACITY) {
-        matColor =
-        aiGetMaterialColor(aiMaterial, AI_MATKEY_COLOR_TRANSPARENT, &color);
+        matColor = aiGetMaterialColor(aiMaterial, AI_MATKEY_COLOR_TRANSPARENT, &color);
     }
     
     if (AI_SUCCESS == matColor)
